@@ -308,6 +308,8 @@ public class train_reservation {
                     break;
                     
                 case 3:
+                	System.out.println("Enter your login id: ");
+                	login_id = sc.nextInt();
                 case 4:
                 case 5:
                 case 6: System.out.println("Exiting the System.");
