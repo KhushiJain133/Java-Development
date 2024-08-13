@@ -312,8 +312,64 @@ public class train_reservation {
 					System.out.println("Enter your login id: ");
                 	login_id = sc.nextInt();
 
+					flag = userVerification(login_id);
+
+					if(flag == true){
+						String sql = "select * from train_dts inner join user_dts on user_id = login_id where login_id = ?";
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, login_id);
+						ResultSet rs = ps.executeQuery();
+
+						if(!rs.next()){
+							System.out.println("You have booked nothing.");
+						}
+						else{
+							System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", "Name", "Age", "Train Name",  "Boogie Number", "Seat Number");
+						}
+
+						
+
+						while (rs.next()){
+
+							String user_name = rs.getString("name");
+							int user_age = rs.getInt("age");
+							String train = rs.getString("train_name");
+							int boogie_no = rs.getInt("boogie_no");
+							int seat_no = rs.getInt("seat_no");
+
+							System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", user_name, user_age, train, boogie_no, seat_no);
+						}
+					}
+					else{
+						System.out.println("Please register your profile.");
+					}
+
 					break;
                 case 4:
+
+				String sql = "select * from user_dts left join train_dts on login_id = user_id";
+						ps = conn.prepareStatement(sql);
+						ResultSet rs = ps.executeQuery();
+
+						
+							System.out.printf("%-20s  %-15s %-15s %-15s %-15s %-15s%n", "Login Id", "Name", "Age", "Train Name",  "Boogie Number", "Seat Number");
+						
+
+						
+
+						while (rs.next()){
+
+							int id = rs.getInt("login_id");
+							String user_name = rs.getString("name");
+							int user_age = rs.getInt("age");
+							String train = rs.getString("train_name");
+							int boogie_no = rs.getInt("boogie_no");
+							int seat_no = rs.getInt("seat_no");
+
+							System.out.printf("%-20s  %-15s %-15s %-15s %-15s %-15s%n", id, user_name, user_age, train, boogie_no, seat_no);
+						}
+
+						break;
                 case 5:
                 case 6: System.out.println("Exiting the System.");
                 break;
