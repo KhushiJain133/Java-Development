@@ -108,7 +108,6 @@ public class train_reservation {
                         case 1: 
                         	
                         	boolean seat = false;
-                        	System.out.println("Available seates are:");
                         	try {
                         		String train_name = "train1";
                         		String status = "available";
@@ -118,16 +117,18 @@ public class train_reservation {
                     			ps.setString(2, status);
 
                     			ResultSet rs = ps.executeQuery();
-                    			
-                    			 System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
+
+								if(rs.next()){
+									System.out.println("Available seates are:");
+									System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
                     	            System.out.println("---------------------------------------------");
-                    			while (rs.next()) {
+                    			do{
                     				int boogieNumber = rs.getInt("boogie_no");
                     				int seatNumber = rs.getInt("seat_no");
                     			
                     				
                     				 System.out.printf("%-20s %-15s%n", boogieNumber, seatNumber);
-                    			}
+                    			}while (rs.next());
                     			
                     			System.out.println("Select your boogie:");
                     			int boogie_no = sc.nextInt();
@@ -167,13 +168,19 @@ public class train_reservation {
                     				System.out.println("Select valid seat.");
                     			}
                     			
-                    		} catch (Exception e) {
-                    			e.printStackTrace();
-                    		}
+                    		} 
+							else{
+								System.out.println("No seat available.");
+							}
+								}
+								catch (Exception e) {
+									e.printStackTrace();
+								}	
+                    			
                         	break;
                         case 2: 
                         	seat = false;
-                        	System.out.println("Available seates are:");
+                        	
                         	try {
                         		String train_name = "train2";
                         		String status = "available";
@@ -183,16 +190,17 @@ public class train_reservation {
                     			ps.setString(2, status);
 
                     			ResultSet rs = ps.executeQuery();
-                    			
-                    			 System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
+                    			if(rs.next()){
+									System.out.println("Available seates are:");
+									System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
                     	            System.out.println("---------------------------------------------");
-                    			while (rs.next()) {
+                    			do{
                     				int boogieNumber = rs.getInt("boogie_no");
                     				int seatNumber = rs.getInt("seat_no");
                     			
                     				
                     				 System.out.printf("%-20s %-15s%n", boogieNumber, seatNumber);
-                    			}
+                    			}while (rs.next());
                     			
                     			System.out.println("Select your boogie:");
                     			int boogie_no = sc.nextInt();
@@ -217,13 +225,14 @@ public class train_reservation {
                     			}
                     			if(seat == true) {
                     				status = "booked";
-                    				sql = "update train_dts set status = ? where train_name = ? and boogie_no = ? and seat_no = ? and user_id = ?";
+                    				sql = "update train_dts set status = ?, user_id = ? where train_name = ? and boogie_no = ? and seat_no = ?";
                         			ps = conn.prepareStatement(sql);
                         			ps.setString(1, status);
-                        			ps.setString(2, train_name);
-                        			ps.setInt(3, boogie_no);
-                        			ps.setInt(4, seat_no);
-                        			ps.setInt(5, login_id);
+                        			ps.setInt(2, login_id);
+                        			ps.setString(3, train_name);
+                        			ps.setInt(4, boogie_no);
+                        			ps.setInt(5, seat_no);
+                        			
                         			ps.executeUpdate();
                         			System.out.println("Seat booked");
                     			}
@@ -231,13 +240,18 @@ public class train_reservation {
                     				System.out.println("Select valid seat.");
                     			}
                     			
+                    		} 
+							else{
+								System.out.println("No seat available.");
+							}
+                    			
                     		} catch (Exception e) {
                     			e.printStackTrace();
                     		}
                         	break;
                         case 3: 
                         	seat = false;
-                        	System.out.println("Available seates are:");
+                        	
                         	try {
                         		String train_name = "train3";
                         		String status = "available";
@@ -247,16 +261,17 @@ public class train_reservation {
                     			ps.setString(2, status);
 
                     			ResultSet rs = ps.executeQuery();
-                    			
-                    			 System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
+                    			if(rs.next()){
+									System.out.println("Available seates are:");
+									System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
                     	            System.out.println("---------------------------------------------");
-                    			while (rs.next()) {
+                    			do{
                     				int boogieNumber = rs.getInt("boogie_no");
                     				int seatNumber = rs.getInt("seat_no");
                     			
                     				
                     				 System.out.printf("%-20s %-15s%n", boogieNumber, seatNumber);
-                    			}
+                    			}while (rs.next());
                     			
                     			System.out.println("Select your boogie:");
                     			int boogie_no = sc.nextInt();
@@ -281,13 +296,14 @@ public class train_reservation {
                     			}
                     			if(seat == true) {
                     				status = "booked";
-                    				sql = "update train_dts set status = ? where train_name = ? and boogie_no = ? and seat_no = ? and user_id = ?";
+                    				sql = "update train_dts set status = ?, user_id = ? where train_name = ? and boogie_no = ? and seat_no = ?";
                         			ps = conn.prepareStatement(sql);
                         			ps.setString(1, status);
-                        			ps.setString(2, train_name);
-                        			ps.setInt(3, boogie_no);
-                        			ps.setInt(4, seat_no);
-                        			ps.setInt(5, login_id);
+                        			ps.setInt(2, login_id);
+                        			ps.setString(3, train_name);
+                        			ps.setInt(4, boogie_no);
+                        			ps.setInt(5, seat_no);
+                        			
                         			ps.executeUpdate();
                         			System.out.println("Seat booked");
                     			}
@@ -295,6 +311,10 @@ public class train_reservation {
                     				System.out.println("Select valid seat.");
                     			}
                     			
+                    		} 
+							else{
+								System.out.println("No seat available.");
+							}
                     		} catch (Exception e) {
                     			e.printStackTrace();
                     		}
@@ -320,25 +340,24 @@ public class train_reservation {
 						ps.setInt(1, login_id);
 						ResultSet rs = ps.executeQuery();
 
-						if(!rs.next()){
-							System.out.println("You have booked nothing.");
+						if(rs.next()){
+							System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", "Name", "Age", "Train Name",  "Boogie Number", "Seat Number");
+							do{
+
+								String user_name = rs.getString("name");
+								int user_age = rs.getInt("age");
+								String train = rs.getString("train_name");
+								int boogie_no = rs.getInt("boogie_no");
+								int seat_no = rs.getInt("seat_no");
+	
+								System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", user_name, user_age, train, boogie_no, seat_no);
+							}while (rs.next());
 						}
 						else{
-							System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", "Name", "Age", "Train Name",  "Boogie Number", "Seat Number");
+							System.out.println("You have booked nothing.");
+							
 						}
-
-						
-
-						while (rs.next()){
-
-							String user_name = rs.getString("name");
-							int user_age = rs.getInt("age");
-							String train = rs.getString("train_name");
-							int boogie_no = rs.getInt("boogie_no");
-							int seat_no = rs.getInt("seat_no");
-
-							System.out.printf("%-20s  %-15s %-15s %-15s %-15s%n", user_name, user_age, train, boogie_no, seat_no);
-						}
+	
 					}
 					else{
 						System.out.println("Please register your profile.");
@@ -353,10 +372,7 @@ public class train_reservation {
 
 						
 							System.out.printf("%-20s  %-15s %-15s %-15s %-15s %-15s%n", "Login Id", "Name", "Age", "Train Name",  "Boogie Number", "Seat Number");
-						
-
-						
-
+					
 						while (rs.next()){
 
 							int id = rs.getInt("login_id");
@@ -368,13 +384,75 @@ public class train_reservation {
 
 							System.out.printf("%-20s  %-15s %-15s %-15s %-15s %-15s%n", id, user_name, user_age, train, boogie_no, seat_no);
 						}
-
 						break;
-                case 5:
+                case 5: 
+
+				System.out.println("Remaining seats:");
+				String status = null;
+				String train_name[] = {"train1", "train2", "train3"};
+
+				for(int i=1 ; i<= train_name.length; i++){
+					status = "available";
+					System.out.println("Train " + i);
+
+					for(int j=1 ; j<=3; j++){
+						System.out.println("Boogie" + j);
+						sql = "SELECT * FROM train_reservation.train_dts where train_name = ? and status = ? and boogie_no = ?";
+						ps = conn.prepareStatement(sql);
+						ps.setString(1, train_name[i-1]);
+						ps.setString(2, status);
+						ps.setInt(3, j);
+						rs = ps.executeQuery();
+
+
+						if(rs.next()){
+							do{
+								int seat_no = rs.getInt("seat_no");
+							System.out.println("Seat No: " + seat_no );
+							}while(rs.next());
+							
+						}
+						else{
+							System.out.println("Not available");
+						}
+						System.out.println(" ");
+					}
+				}
+
+					System.out.println("Booked seats:");
+					for(int i=1 ; i<= train_name.length; i++){
+						status = "booked";
+						System.out.println("Train " + i);
+	
+						for(int j=1 ; j<=3; j++){
+							System.out.println("Boogie" + j);
+							sql = "SELECT * FROM train_reservation.train_dts where train_name = ? and status = ? and boogie_no = ?";
+							ps = conn.prepareStatement(sql);
+							ps.setString(1, train_name[i-1]);
+							ps.setString(2, status);
+							ps.setInt(3, j);
+							rs = ps.executeQuery();
+	
+	
+							if(rs.next()){
+								do{
+									int seat_no = rs.getInt("seat_no");
+								System.out.println("Seat No: " + seat_no );
+								}while(rs.next());
+								
+							}
+							else{
+								System.out.println("Nothing Boooked.");
+							}
+							System.out.println(" ");
+						}
+
+				}
+				break;
                 case 6: System.out.println("Exiting the System.");
                 break;
                 default: System.out.println("Invalid choice. Please choose a valid option");
             }
-        }while(choice !=6); 
+        } while(choice != 6);
     }
 }
