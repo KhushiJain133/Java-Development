@@ -351,5 +351,9 @@ public class train_reservation {
                 default: System.out.println("Invalid choice. Please choose a valid option");
             }
         } while(choice != 6);
+
+		sc.close();
+		conn.close();
+		ps.close();
     }
 }
