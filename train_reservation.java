@@ -8,11 +8,17 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class train_reservation {
+
+	static String url = "jdbc:mysql://localhost:3306/train_reservation";
+	static String username = "root";
+	static String password = "root"; 
+
+	// Database connection
 	
 	public static Connection connectDB(){
         try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/train_reservation", "root", "root");
+            Connection conn = DriverManager.getConnection(url, username, password);
             return conn;
         } 
         catch (Exception e) {
@@ -21,6 +27,9 @@ public class train_reservation {
         }
     }
 	
+
+	// User verification code
+
 	public static boolean userVerification(int id) throws SQLException {
 		boolean user = false;
 		
@@ -45,71 +54,17 @@ public class train_reservation {
 		
 		return user;
 	}
-	public static void main(String[] args) throws SQLException{
-        Scanner sc = new Scanner(System.in);
 
-        Connection conn = null;
+
+	// To handle train booking
+	private static void handleBooking(String trainname, int login_id){
+
+		Connection conn = connectDB();
         PreparedStatement ps = null;
-        conn = connectDB();
-
-        int choice;
-        do {  
-            System.out.println("Enter your choice");  
-            System.out.println("1. Enter Profile");  
-            System.out.println("2. Enter Train Choice");  
-            System.out.println("3. Display Person Information");  
-            System.out.println("4. Display Complete Information");  
-            System.out.println("5. Display Train Status");  
-            System.out.print("6. Exit\n");
-            choice = sc.nextInt();
-
-            switch(choice){
-                case 1: 
-                System.out.println("Enter Your name: ");
-                String name = sc.next();
-                System.out.println("Enter your age: ");
-                int age = sc.nextInt();
-               
-				Random random = new Random();
-                int login_id = random.nextInt(9000000) + 1000000;
-                
-                try{
-                    String sql = "insert into user_dts(name, age, login_id) values(?,?,?)";
-                    ps = conn.prepareStatement(sql);
-                    ps.setString(1, name);
-                    ps.setInt(2, age);
-                    ps.setInt(3, login_id);
-                    ps.execute();
-                    System.out.println("Profile registered successfully");
-                }
-                catch (Exception e) {
-                   System.out.println(e);
-                }
-               
-                System.out.println("User Login id:"+ login_id);
-
-                break;
-                case 2:
-                	
-                	System.out.println("Enter your login id: ");
-                	login_id = sc.nextInt();
-                	
-                	boolean flag = userVerification(login_id);
-                	
-                	if(flag == true) {
-                		int train;
-                    	System.out.println("Available train:");  
-                        System.out.println("1. Train 1");  
-                        System.out.println("2. Train 2");  
-                        System.out.println("3. Train 3"); 
-                        
-                        train = sc.nextInt();
-                        switch(train) {
-                        case 1: 
-                        	
-                        	boolean seat = false;
+		boolean seat = false;
                         	try {
-                        		String train_name = "train1";
+								Scanner sc = new Scanner(System.in);
+                        		String train_name = trainname;
                         		String status = "available";
                     			String sql = "select * from train_dts where train_name = ? and status = ?";
                     			ps = conn.prepareStatement(sql);
@@ -177,147 +132,84 @@ public class train_reservation {
 									e.printStackTrace();
 								}	
                     			
+
+	}
+	public static void main(String[] args) throws SQLException{
+        Scanner sc = new Scanner(System.in);
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        conn = connectDB();
+
+        int choice;
+        do {  
+            System.out.println("Enter your choice");  
+            System.out.println("1. Enter Profile");  
+            System.out.println("2. Enter Train Choice");  
+            System.out.println("3. Display Person Information");  
+            System.out.println("4. Display Complete Information");  
+            System.out.println("5. Display Train Status");  
+            System.out.print("6. Exit\n");
+            choice = sc.nextInt();
+
+
+			// Switch case to handle user selection of choice.
+            switch(choice){
+
+				// Create user profile
+                case 1: 
+                System.out.println("Enter Your name: ");
+                String name = sc.next();
+                System.out.println("Enter your age: ");
+                int age = sc.nextInt();
+               
+				Random random = new Random();
+                int login_id = random.nextInt(9000000) + 1000000;
+                
+                try{
+                    String sql = "insert into user_dts(name, age, login_id) values(?,?,?)";
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, name);
+                    ps.setInt(2, age);
+                    ps.setInt(3, login_id);
+                    ps.execute();
+                    System.out.println("Profile registered successfully");
+                }
+                catch (Exception e) {
+                   System.out.println(e);
+                }
+               
+                System.out.println("User Login id:"+ login_id);
+
+                break;
+
+				// For train booking
+                case 2:
+                	
+                	System.out.println("Enter your login id: ");
+                	login_id = sc.nextInt();
+                	
+                	boolean flag = userVerification(login_id);
+                	
+                	if(flag == true) {
+                		int train;
+                    	System.out.println("Available train:");  
+                        System.out.println("1. Train 1");  
+                        System.out.println("2. Train 2");  
+                        System.out.println("3. Train 3"); 
+                        
+                        train = sc.nextInt();
+                        switch(train) {
+                        case 1: 
+                        	
+                        	handleBooking("train1", login_id);
+                    			
                         	break;
                         case 2: 
-                        	seat = false;
-                        	
-                        	try {
-                        		String train_name = "train2";
-                        		String status = "available";
-                    			String sql = "select * from train_dts where train_name = ? and status = ?";
-                    			ps = conn.prepareStatement(sql);
-                    			ps.setString(1, train_name);
-                    			ps.setString(2, status);
-
-                    			ResultSet rs = ps.executeQuery();
-                    			if(rs.next()){
-									System.out.println("Available seates are:");
-									System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
-                    	            System.out.println("---------------------------------------------");
-                    			do{
-                    				int boogieNumber = rs.getInt("boogie_no");
-                    				int seatNumber = rs.getInt("seat_no");
-                    			
-                    				
-                    				 System.out.printf("%-20s %-15s%n", boogieNumber, seatNumber);
-                    			}while (rs.next());
-                    			
-                    			System.out.println("Select your boogie:");
-                    			int boogie_no = sc.nextInt();
-                    			
-                    			System.out.println("Select your seat:");
-                    			int seat_no = sc.nextInt();
-                    			
-                    			sql = "Select count(*) from train_dts where train_name = ? and boogie_no = ? and seat_no = ? and status = ?";
-                    			ps = conn.prepareStatement(sql);
-                    			ps.setString(1, train_name);
-                    			ps.setInt(2, boogie_no);
-                    			ps.setInt(3, seat_no);
-                    			ps.setString(4, status);
-                    			
-                    			rs = ps.executeQuery();
-                    			
-                    			if(rs.next()) {
-                    				int count = rs.getInt(1);
-                    				if(count > 0) {
-                    					seat = true;
-                    				}
-                    			}
-                    			if(seat == true) {
-                    				status = "booked";
-                    				sql = "update train_dts set status = ?, user_id = ? where train_name = ? and boogie_no = ? and seat_no = ?";
-                        			ps = conn.prepareStatement(sql);
-                        			ps.setString(1, status);
-                        			ps.setInt(2, login_id);
-                        			ps.setString(3, train_name);
-                        			ps.setInt(4, boogie_no);
-                        			ps.setInt(5, seat_no);
-                        			
-                        			ps.executeUpdate();
-                        			System.out.println("Seat booked");
-                    			}
-                    			else {
-                    				System.out.println("Select valid seat.");
-                    			}
-                    			
-                    		} 
-							else{
-								System.out.println("No seat available.");
-							}
-                    			
-                    		} catch (Exception e) {
-                    			e.printStackTrace();
-                    		}
+						handleBooking("train2", login_id);
                         	break;
                         case 3: 
-                        	seat = false;
-                        	
-                        	try {
-                        		String train_name = "train3";
-                        		String status = "available";
-                    			String sql = "select * from train_dts where train_name = ? and status = ?";
-                    			ps = conn.prepareStatement(sql);
-                    			ps.setString(1, train_name);
-                    			ps.setString(2, status);
-
-                    			ResultSet rs = ps.executeQuery();
-                    			if(rs.next()){
-									System.out.println("Available seates are:");
-									System.out.printf("%-20s  %-15s%n",  "Boogie Number", "Seat Number");
-                    	            System.out.println("---------------------------------------------");
-                    			do{
-                    				int boogieNumber = rs.getInt("boogie_no");
-                    				int seatNumber = rs.getInt("seat_no");
-                    			
-                    				
-                    				 System.out.printf("%-20s %-15s%n", boogieNumber, seatNumber);
-                    			}while (rs.next());
-                    			
-                    			System.out.println("Select your boogie:");
-                    			int boogie_no = sc.nextInt();
-                    			
-                    			System.out.println("Select your seat:");
-                    			int seat_no = sc.nextInt();
-                    			
-                    			sql = "Select count(*) from train_dts where train_name = ? and boogie_no = ? and seat_no = ? and status = ?";
-                    			ps = conn.prepareStatement(sql);
-                    			ps.setString(1, train_name);
-                    			ps.setInt(2, boogie_no);
-                    			ps.setInt(3, seat_no);
-                    			ps.setString(4, status);
-                    			
-                    			rs = ps.executeQuery();
-                    			
-                    			if(rs.next()) {
-                    				int count = rs.getInt(1);
-                    				if(count > 0) {
-                    					seat = true;
-                    				}
-                    			}
-                    			if(seat == true) {
-                    				status = "booked";
-                    				sql = "update train_dts set status = ?, user_id = ? where train_name = ? and boogie_no = ? and seat_no = ?";
-                        			ps = conn.prepareStatement(sql);
-                        			ps.setString(1, status);
-                        			ps.setInt(2, login_id);
-                        			ps.setString(3, train_name);
-                        			ps.setInt(4, boogie_no);
-                        			ps.setInt(5, seat_no);
-                        			
-                        			ps.executeUpdate();
-                        			System.out.println("Seat booked");
-                    			}
-                    			else {
-                    				System.out.println("Select valid seat.");
-                    			}
-                    			
-                    		} 
-							else{
-								System.out.println("No seat available.");
-							}
-                    		} catch (Exception e) {
-                    			e.printStackTrace();
-                    		}
+						handleBooking("train3", login_id);
                         	break;
                         	default: System.out.println("Invalid choice. Please choose a valid option");
                         }
@@ -327,6 +219,7 @@ public class train_reservation {
                 	}
                     break;
                     
+				// To display individual personal details
                 case 3:
 
 					System.out.println("Enter your login id: ");
@@ -364,6 +257,8 @@ public class train_reservation {
 					}
 
 					break;
+
+				// to display the details of all the user registered in the system
                 case 4:
 
 				String sql = "select * from user_dts left join train_dts on login_id = user_id";
@@ -385,6 +280,8 @@ public class train_reservation {
 							System.out.printf("%-20s  %-15s %-15s %-15s %-15s %-15s%n", id, user_name, user_age, train, boogie_no, seat_no);
 						}
 						break;
+
+				// To display train status of booked and unbooked seats.
                 case 5: 
 
 				System.out.println("Remaining seats:");
