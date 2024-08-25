@@ -352,8 +352,6 @@ public class trainReservation {
             }
         } while(choice != 6);
 
-		sc.close();
-		conn.close();
-		ps.close();
+		
     }
 }
